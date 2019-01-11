@@ -1680,7 +1680,7 @@ endif
 
 # $(1): output file
 define build-systemimage-target
-  $(hide) ./vendor/aosp/tools/changelog.sh
+  $(hide) ./vendor/ion/tools/changelog.sh
   $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/$(CUSTOM_VERSION)-Changelog.txt
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
