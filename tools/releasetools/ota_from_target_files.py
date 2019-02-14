@@ -919,21 +919,32 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.AppendExtra("ifelse(is_mounted(\"{0}\"), unmount(\"{0}\"));".format(system_mount_point))
 
   android_version = target_info.GetBuildProp("ro.build.version.release")
+  ionizer_version = target_info.GetBuildProp("ro.ionizer")
   build_id = target_info.GetBuildProp("ro.build.id")
   build_date = target_info.GetBuildProp("ro.ion.build_date")
   security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
   device = target_info.GetBuildProp("ro.ion.device")
 
-  script.Print("----------------------------------------------");
-  script.Print("                   ion-OS");
-  script.Print("               by AnkitGourav");
-  script.Print("----------------------------------------------");
-  script.Print(" Android version: %s"%(android_version));
-  script.Print(" Build id: %s"%(build_id));
-  script.Print(" Build date: %s"%(build_date));
-  script.Print(" Security patch: %s"%(security_patch));
-  script.Print(" Device: %s"%(device));
-  script.Print("----------------------------------------------");
+  script.Print("-----------------------------------------------------");
+  script.Print("                    _   ___   ____                   ");
+  script.Print("                   [_] (___) [ __ )                  ");
+  script.Print("                   {_}(_)_(_){ ( ) }                 ");
+  script.Print("                   [_] (___) [_] [_]                 ");
+  script.Print("                                                     ");
+  script.Print("-----------------------------------------------------");
+  script.Print("                        ion                          ");
+  script.Print("                --> AnkitGourav                      ");
+  script.Print("-----------------------------------------------------");
+  script.Print(" - Android version : %s"%(android_version));
+  script.Print(" - ionizer version : %s"%(ionizer_version));
+  script.Print(" - Build ID        : %s"%(build_id));
+  script.Print(" - Build Date      : %s"%(build_date));
+  script.Print(" - Security Patch  : %s"%(security_patch));
+  script.Print(" - Device          : %s"%(device));
+  script.Print("-----------------------------------------------------");
+  script.Print("          @Telegram --> https://t.me/ion_OS          ");
+  script.Print("-----------------------------------------------------");
+
   device_specific.FullOTA_InstallBegin()
 
   CopyInstallTools(output_zip)
