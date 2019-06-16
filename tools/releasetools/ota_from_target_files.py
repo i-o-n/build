@@ -836,14 +836,13 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   device = target_info.GetBuildProp("ro.product.device")
 
   script.Print("-----------------------------------------------------");
-  script.Print("                    _   ___   ____                   ");
-  script.Print("                   [_] (___) [ __ )                  ");
-  script.Print("                   {_}(_)_(_){ ( ) }                 ");
-  script.Print("                   [_] (___) [_] [_]                 ");
+  script.Print("                   _   ___   ____                    ");
+  script.Print("                  [_] (___) [ __ )                   ");
+  script.Print("                  {_}(_)_(_){ ( ) }                  ");
+  script.Print("                  [_] (___) [_] [_]                  ");
   script.Print("                                                     ");
   script.Print("-----------------------------------------------------");
-  script.Print("                        ion                          ");
-  script.Print("                --> AnkitGourav                      ");
+  script.Print("                       >ion                          ");
   script.Print("-----------------------------------------------------");
   script.Print(" - Android version : %s"%(android_version));
   script.Print(" - ionizer version : %s"%(ionizer_version));
