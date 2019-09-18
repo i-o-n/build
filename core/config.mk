@@ -235,8 +235,8 @@ FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
 
 -include vendor/extra/BoardConfigExtra.mk
 
-ifneq ($(CUSTOM_BUILD),)
-include vendor/aosp/config/BoardConfig.mk
+ifneq ($(ION_BUILD),)
+include vendor/ion/config/BoardConfig.mk
 endif
 
 # The build system exposes several variables for where to find the kernel
@@ -1183,7 +1183,7 @@ endif
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
-ifneq ($(CUSTOM_BUILD),)
+ifneq ($(ION_BUILD),)
 ifneq ($(wildcard device/custom/sepolicy/common/sepolicy.mk),)
 ## We need to be sure the global selinux policies are included
 ## last, to avoid accidental resetting by device configs

@@ -61,6 +61,6 @@ if [ -n "$BUILD_THUMBPRINT" ] ; then
   echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
 fi
 
-echo "org.pixelexperience.device=$CUSTOM_DEVICE"
+echo "ro.ion.device=$ION_DEVICE"
 
 echo "# end build properties"
