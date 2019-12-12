@@ -180,10 +180,6 @@ A/B OTA specific options
 
   --override_device <device>
       Override device-specific asserts. Can be a comma-separated list.
-
-  --backup <boolean>
-      Enable or disable the execution of backuptool.sh.
-      Disabled by default.
 """
 
 from __future__ import print_function
@@ -243,13 +239,12 @@ OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
 
 OPTIONS.override_device = 'auto'
-OPTIONS.backuptool = False
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*', 'INSTALL/*', 'SYSTEM/build.prop']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*', 'SYSTEM/build.prop']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 # Images to be excluded from secondary payload. We essentially only keep
@@ -817,15 +812,6 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
                           vendor_updated or odm_updated)
 
 
-def CopyInstallTools(output_zip):
-  install_path = os.path.join(OPTIONS.input_tmp, "INSTALL")
-  for root, subdirs, files in os.walk(install_path):
-     for f in files:
-      install_source = os.path.join(root, f)
-      install_target = os.path.join("install", os.path.relpath(root, install_path), f)
-      output_zip.write(install_source, install_target)
-
-
 def WriteFullOTAPackage(input_zip, output_file):
   target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
 
@@ -916,13 +902,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # Dump fingerprints
   script.Print("Target: {}".format(target_info.fingerprint))
 
-  is_system_as_root = target_info.get("system_root_image") == "true"
-  if is_system_as_root and not common.system_as_system:
-    system_mount_point = "/system_root"
-  else:
-    system_mount_point = "/system"
-
-  script.AppendExtra("ifelse(is_mounted(\"{0}\"), unmount(\"{0}\"));".format(system_mount_point))
+  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
 
   android_version = target_info.GetBuildProp("ro.build.version.release")
   ionizer_version = target_info.GetBuildProp("ro.ionizer")
@@ -951,23 +931,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("-----------------------------------------------------");
 
   device_specific.FullOTA_InstallBegin()
-
-  CopyInstallTools(output_zip)
-  script.UnpackPackageDir("install", "/tmp/install")
-  script.SetPermissionsRecursive("/tmp/install", 0, 0, 0755, 0644, None, None)
-  script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0755, 0755, None, None)
-
-  if OPTIONS.backuptool:
-    if is_system_as_root:
-      script.fstab["/system"].mount_point = system_mount_point
-    script.Mount("/system")
-    if is_system_as_root and common.system_as_system:
-      script.RunBackup("backup", "/system/system")
-    else:
-      script.RunBackup("backup", "/system")
-    script.Unmount(system_mount_point)
-    if is_system_as_root:
-      script.fstab["/system"].mount_point = "/"
 
   system_progress = 0.75
 
@@ -1027,19 +990,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
   device_specific.FullOTA_PostValidate()
-
-  if OPTIONS.backuptool:
-    script.ShowProgress(0.02, 10)
-    if is_system_as_root:
-      script.fstab["/system"].mount_point = system_mount_point
-    script.Mount("/system")
-    if is_system_as_root and common.system_as_system:
-      script.RunBackup("restore", "/system/system")
-    else:
-      script.RunBackup("restore", "/system")
-    script.Unmount(system_mount_point)
-    if is_system_as_root:
-      script.fstab["/system"].mount_point = "/"
 
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
@@ -2272,8 +2222,6 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o in ("--override_device"):
       OPTIONS.override_device = a
-    elif o in ("--backup"):
-      OPTIONS.backuptool = bool(a.lower() == 'true')
     else:
       return False
     return True
@@ -2309,7 +2257,6 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "override_device=",
-                                 "backup=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
